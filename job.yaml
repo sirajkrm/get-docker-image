@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: docker-image-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: docker-image-job
+        image: get-docker-image:latest
+        imagePullPolicy: Never
+        env:
+        - name: REPOSITORY_LIST_URL
+          value: "https://gist.githubusercontent.com/jmelis/c60e61a893248244dc4fa12b946585c4/raw/25d39f67f2405330a6314cad64fac423a171162c/sources.txt"
+        args: ["-url", "$(REPOSITORY_LIST_URL)"]
+      restartPolicy: Never
