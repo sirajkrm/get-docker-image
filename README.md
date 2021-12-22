@@ -1,4 +1,4 @@
-# get-docker-image
+# The get-docker-image Tool
 This is a tool that provides you a list of Docker Images used in a repository.
 
 The tool needs an input of a URL that must have the repository link (.git) and chosen commit SHA hash.
@@ -14,6 +14,15 @@ Example:
 https://github.com/app-sre/qontract-reconcile.git 30af65af14a2dce962df923446afff24dd8f123e
 https://github.com/app-sre/container-images.git c260deaf135fc0efaab365ea234a5b86b3ead404
 ```
+
+### Used Libraries
+The libraries involved in this project are:
+* [go-git](https://github.com/go-git/go-git/) <br/>
+  This library provides code instructions specifically for Go to do some actions on a Git repository in general (clone, commit, list tree, push etc...) <br/>
+  The reason for it use here is, it provides support for in-memory as it's making the clone and accessing files inside the repository faster rather than relying on OS Filesystem directly. <br/>
+* [go-git-billy](https://github.com/go-git/go-billy) <br/>
+  This library provides Filesystem implementation based on memory. <br/>
+  It allows interacting with files (I/O read and write) faster.
 
 ## Usage
 To properly use the tool you need to provid a valid URL with the `url` flag, or an error will occur.

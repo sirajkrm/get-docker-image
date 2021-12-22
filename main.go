@@ -12,26 +12,13 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/sirajkrm/get-docker-image/data"
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	memory "github.com/go-git/go-git/v5/storage/memory"
 )
-
-// Data defines the structure for a Reposity
-type data struct {
-	ID         int      `json:"id"`
-	RepoURL    string   `json:"repository"`
-	Commit     string   `json:"commit"`
-	Dockerfile string   `json:"dockerfile"`
-	Image      []string `json:"image"`
-}
-
-// Repositories is a collection of Data which is a collection of main struct data
-type Repositories struct {
-	Data []*data
-}
 
 func check(e error) {
 	if e != nil {
@@ -69,7 +56,7 @@ func getImage(term, s string) []string {
 
 }
 
-//func to read a URL and convert it to string
+//func to read a URL content and convert it to string
 func readURL(URL string) string {
 	response, err := http.Get(URL)
 
@@ -107,7 +94,7 @@ func checkArgs() {
 
 var (
 	storer     *memory.Storage
-	repository []*data
+	repository []*Data.RepoData
 )
 
 func main() {
@@ -153,7 +140,7 @@ func main() {
 			//this is where listing all files of Tree
 			tree.Files().ForEach(func(f *object.File) error {
 
-				//get Dockerfile exactly not before (\\b) not after $
+				//get Dockerfile (name of file itself) exactly not before (\\b) not after $
 				matched, err := regexp.MatchString("\\bDockerfile$", f.Name)
 				check(err)
 
@@ -179,12 +166,13 @@ func main() {
 				}
 				return nil
 			})
-			repository = append(repository, &data{ID: id, RepoURL: repoUrl, Commit: repoCommit, Dockerfile: dockerfilePath, Image: finalResult})
+			repository = append(repository, &Data.RepoData{ID: id, RepoURL: repoUrl, Commit: repoCommit, Dockerfile: dockerfilePath, Image: finalResult})
 		}
 	}
 
 	//having the data presented in JSON format
-	j, _ := json.Marshal(Repositories{Data: repository})
+	j, err := json.Marshal(&Data.Repositories{Data: repository})
+	check(err)
 	fmt.Printf("%s\n", j)
 
 }
